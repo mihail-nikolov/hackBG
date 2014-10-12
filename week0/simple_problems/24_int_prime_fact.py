@@ -16,7 +16,7 @@ def is_it_works(n):
         return True
     else:
         for i in range(2, n+1):
-            for j in range(i, n+1):
+            for j in range(1, n+1):
                 if (i ** j == n) and (is_prime(i) is True) and (is_prime(j) is True):
                     return True
     return False
@@ -28,8 +28,8 @@ def ret_arr(n):
         arr = [n, 1]
         return arr
     else:
-        for c in range(2, n):
-            for d in range(c, n):
+        for c in range(2, n+1):
+            for d in range(1, n+1):
                 if c ** d == n and (is_prime(c) is True) and (is_prime(d) is True):
                     arr = [c, d]
                     return arr
@@ -41,9 +41,9 @@ def prime_fact(n):
         result = [n, 1]
         return result
     else:
-        for a in range(2, n):
+        for a in range(2, n+1):
             if n % a == 0:
-                for b in range(a, n):
+                for b in range(a, n+1):
                     if (a * b == n) and (is_it_works(a) is True) and (is_it_works(b) is True):
                         arr1 = ret_arr(a)
                         arr2 = ret_arr(b)
@@ -51,4 +51,4 @@ def prime_fact(n):
                         return result
     return False
 
-print(prime_fact(356))
+print(prime_fact(1000))
