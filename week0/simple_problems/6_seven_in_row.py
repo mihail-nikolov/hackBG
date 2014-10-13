@@ -6,12 +6,12 @@ def sevens_in_a_row(arr, n):
     count = 0
     for i in range(len(arr)):
         if arr[i] == 7:
-            for j in range(i+1, i+n):
+            for j in range(i + 1, i + n):
                 if j == len(arr):
                     break
                 elif arr[j] == 7:
                     count = count + 1
-            if (count+1) == n:
+            if (count + 1) == n:
                 return True
             else:
                 count = 0
