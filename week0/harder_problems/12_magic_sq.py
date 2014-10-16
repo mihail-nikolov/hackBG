@@ -1,3 +1,5 @@
+import copy
+
 square = [[4, 9, 2], [3, 5, 7], [8, 1, 6]]
 for row in square:
     print(row)
@@ -25,24 +27,37 @@ def sum_diag(matrix):
     return check_sub_results(result_diags)
 
 
+"""
 def sum_cols(matrix):
     result_cols = []
     for column in range(len(matrix[0])):
         n = 0
-        for row in matrix:
-            n += row[column]
+        for el in matrix:
+            n += el[column]
         result_cols.append(n)
     return check_sub_results(result_cols)
+"""
+
+
+def sum_cols(matrix):
+    transposed_matix = copy.deepcopy(matrix)
+    transposed_matix = [list(row) for row in zip(*transposed_matix)]
+    result_rows = []
+    for row in transposed_matix:
+        n = 0
+        for el in row:
+            n += el
+        result_rows.append(n)
+    return check_sub_results(result_rows)
 
 
 def sum_rows(matrix):
     result_rows = []
-    n = 0
     for row in matrix:
+        n = 0
         for el in row:
             n += el
         result_rows.append(n)
-        n = 0
     return check_sub_results(result_rows)
 
 
