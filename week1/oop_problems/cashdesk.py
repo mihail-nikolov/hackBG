@@ -1,7 +1,7 @@
-class cashdesk:
+class Cashdesk:
 
-    def __init__(self, money = {100: 0, 50: 0, 20: 0, 10: 0, 5: 0, 2: 0, 1: 0}):
-        self.money = money
+    def __init__(self):
+        self.money = {100: 0, 50: 0, 20: 0, 10: 0, 5: 0, 2: 0, 1: 0}
 
     def take_money(self, money_dict):
         for i in money_dict:
@@ -29,10 +29,10 @@ class cashdesk:
                 return True
             else:
                 return False
-
-
-my_cashdesk = cashdesk()
+"""
+my_cashdesk = Cashdesk()
 my_cashdesk.take_money({100: 1, 50: 2, 2: 1})
 print(my_cashdesk.money)
 print(my_cashdesk.total())
 print(my_cashdesk.can_withdraw_money(152))
+"""

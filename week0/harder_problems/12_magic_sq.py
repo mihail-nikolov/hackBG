@@ -13,6 +13,28 @@ def check_sub_results(arr):
     return n
 
 
+def sum_rows(matrix):
+    result_rows = []
+    for row in matrix:
+        n = 0
+        for el in row:
+            n += el
+        result_rows.append(n)
+    return check_sub_results(result_rows)
+
+
+def sum_cols(matrix):
+    transposed_matrix = copy.deepcopy(matrix)
+    transposed_matrix = [list(row) for row in zip(*transposed_matrix)]
+    result_rows = []
+    for row in transposed_matrix:
+        n = 0
+        for el in row:
+            n += el
+        result_rows.append(n)
+    return check_sub_results(result_rows)
+
+
 def sum_diag(matrix):
     n1 = 0
     n2 = 0
@@ -27,40 +49,6 @@ def sum_diag(matrix):
     return check_sub_results(result_diags)
 
 
-"""
-def sum_cols(matrix):
-    result_cols = []
-    for column in range(len(matrix[0])):
-        n = 0
-        for el in matrix:
-            n += el[column]
-        result_cols.append(n)
-    return check_sub_results(result_cols)
-"""
-
-
-def sum_cols(matrix):
-    transposed_matix = copy.deepcopy(matrix)
-    transposed_matix = [list(row) for row in zip(*transposed_matix)]
-    result_rows = []
-    for row in transposed_matix:
-        n = 0
-        for el in row:
-            n += el
-        result_rows.append(n)
-    return check_sub_results(result_rows)
-
-
-def sum_rows(matrix):
-    result_rows = []
-    for row in matrix:
-        n = 0
-        for el in row:
-            n += el
-        result_rows.append(n)
-    return check_sub_results(result_rows)
-
-
 def magic_square(matrix):
     diags = sum_diag(matrix)
     cols = sum_cols(matrix)
@@ -71,3 +59,16 @@ def magic_square(matrix):
         return "It is a magic square"
 
 print(magic_square(square))
+
+
+
+"""
+def sum_cols(matrix):
+    result_cols = []
+    for column in range(len(matrix[0])):
+        n = 0
+        for el in matrix:
+            n += el[column]
+        result_cols.append(n)
+    return check_sub_results(result_cols)
+"""
