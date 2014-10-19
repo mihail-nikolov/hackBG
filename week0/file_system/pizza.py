@@ -1,5 +1,3 @@
-import sys
-from random import randint
 from time import time
 from datetime import datetime
 
@@ -51,6 +49,7 @@ def save_command():
     filename = create_filename()
     files_array.append(filename)
     content = create_content(people_dict)
+    people_dict.clear()
     file = open(filename, 'w+')
     file.write(content)
     file.close()
