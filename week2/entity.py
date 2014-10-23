@@ -4,6 +4,7 @@ class Entity:
         self.name = name
         self.health = health
         self._maxhealth = health
+        self.weapon = None
 
     def get_health(self):
         return self.health
@@ -27,3 +28,18 @@ class Entity:
             self.health = self._maxhealth
         return True
 
+    def equip_weapon(self, weapon):
+        self.weapon = weapon
+
+    def has_weapon(self):
+        if self.weapon is not None:
+            return True
+        return False
+
+    def attack(self):
+        if self.weapon is None:
+            return 0
+        if self.weapon.critical_hit() is True:
+            damage_making = self.weapon.damage*2
+        damage_making = self.weapon.damage
+        return damage_making

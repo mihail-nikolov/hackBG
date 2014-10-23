@@ -1,5 +1,6 @@
 from entity import Entity
 
+
 class Orc(Entity):
 
     def __init__(self, name, health, berserk_factor):
@@ -14,3 +15,5 @@ class Orc(Entity):
         else:
             self.berserk_factor = 2
 
+    def attack(self):
+        return Entity.attack(self)*self.berserk_factor

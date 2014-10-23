@@ -42,8 +42,6 @@ def create_content(dic):
         cont += str(person) + " - " + str(dic[person]) + "\n"
     return cont
 
-#как да изчистя речника след като съм save-нал поръчката, за да не се преповтаря в следващия файл
-
 
 def save_command():
     filename = create_filename()
@@ -61,8 +59,10 @@ def list_command(arr):
 
 
 def load_command(i, arr):
-    if int(i) < 1:
-        return "wrong number input"
+    if i == "":
+        return "input some number"
+    elif (int(i) < 1):
+        return "input 'load' + (a number >= 1)"
     else:
         filename = arr[int(i)-1]
         file = open(filename, "r")
@@ -90,7 +90,7 @@ def main():
         command = split_command_str(input("Enter command>"))
 
         if the_command(command, "take"):
-            print(take_money(command[1], command[2]))
+            take_money(command[1], command[2])
 
         elif the_command(command, "status"):
             print(current_status(command[1]))

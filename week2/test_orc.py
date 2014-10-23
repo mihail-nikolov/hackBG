@@ -1,5 +1,6 @@
 import unittest
 import orc
+from weapon import Weapon
 
 
 class OrcTests(unittest.TestCase):
@@ -19,6 +20,11 @@ class OrcTests(unittest.TestCase):
     def test_set_self_lower_berserk_factor(self):
         my_orc = orc.Orc("Orcy", 120, 0)
         self.assertEqual(my_orc.berserk_factor, 1)
+
+    def test_attack_crit_dam(self):
+        axe_weapon = Weapon("axe", 20, 0.5)
+        self.orc4o_orc.weapon = axe_weapon
+        self.assertIn(self.orc4o_orc.attack(), [20*1.5, 40*1.5])
 
 
 if __name__ == '__main__':

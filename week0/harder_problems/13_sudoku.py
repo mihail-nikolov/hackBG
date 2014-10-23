@@ -11,8 +11,7 @@ sudoku_matrix = [
         [8, 9, 6, 7, 4, 3, 1, 5 ,2],
         [2, 4, 3, 6, 1, 5, 9, 8, 7]
 ]
-
-square = [[4, 9, 2], [3, 5, 7], [8, 1, 6]]
+#square = [[4, 9, 2], [3, 5, 7], [8, 1, 6]]
 for row in sudoku_matrix:
     print(row)
 
@@ -82,4 +81,3 @@ def sudoku(matrix):
     return "The sudoku is solved"
 
 print(sudoku(sudoku_matrix))
-

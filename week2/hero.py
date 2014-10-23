@@ -1,5 +1,6 @@
 from entity import Entity
 
+
 class Hero(Entity):
 
     def __init__(self, name, health, nickname):
@@ -7,5 +8,4 @@ class Hero(Entity):
         self.nickname = nickname
 
     def hero_known_as(self):
-        return "{} the {}".format(self.name ,self.nickname)
-        #areturn self.name + " the " + self.nickname
+        return "{} the {}".format(self.name, self.nickname)

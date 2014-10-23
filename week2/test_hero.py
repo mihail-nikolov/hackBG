@@ -13,7 +13,7 @@ class HeroTests(unittest.TestCase):
         self.assertEqual(self.bron_hero.nickname, "DragonSlayer")
 
     def test_hero_known_as(self):
-        self.assertEqual(self.bron_hero.hero_known_as(),"Bron the DragonSlayer")
+        self.assertEqual(self.bron_hero.hero_known_as(), "Bron the DragonSlayer")
 
 
 if __name__ == '__main__':

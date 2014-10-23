@@ -27,10 +27,5 @@ class WeaponTests(unittest.TestCase):
         self.assertTrue(False in results)
 
 
-
-
-
-  #  def test_
-
 if __name__ == '__main__':
     unittest.main()
