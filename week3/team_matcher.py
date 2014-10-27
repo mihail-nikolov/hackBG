@@ -1,4 +1,5 @@
 import requests
+import random
 
 
 start_message = "Hello, you can use one the the following commands:\
@@ -7,10 +8,13 @@ start_message = "Hello, you can use one the the following commands:\
              "
 
 
-def give_me_dict_from_json_api():
+def give_me_arr_from_json_api():
     r = requests.get("https://hackbulgaria.com/api/students/", verify=False)
-    request_dict = r.json()
-    return request_dict
+    request_arr = r.json()
+    return request_arr
+
+
+request_arr = give_me_arr_from_json_api()
 
 
 def split_command_str(command):
@@ -31,6 +35,8 @@ def list_courses(js_dic):
             if element["name"] not in courses_arr:
                 courses_arr.append(element["name"])
     return courses_arr
+
+courses_array = list_courses(request_arr)
 
 
 def print_arr(arr):
@@ -54,37 +60,61 @@ def return_name_from_course_id(course_id, array):
             return element
 
 
-def filter_available_people(dic):
+def filter_available_people():
     filtered_arr = []
-    for element in dic:
-        if element["available"] == "true":
+    for element in request_arr:
+        if element["available"] is True:
             filtered_arr.append(element)
     return filtered_arr
 
 
-def create_array_of_people_from_given_course(dict, course_id, group_time):
+def filter_id_group_time(course_id, group_time):
+    group_name = return_name_from_course_id(course_id, courses_array)
+    arr = filter_available_people()
+    new_arr = []
+    for personal_information in arr:
+        tmp_arr = []
+        tmp_arr = personal_information["courses"]
+        for course in tmp_arr:
+            if course["name"] == group_name and course["group"] == group_time:
+                new_arr.append(personal_information)
+    return new_arr
 
-    course_name = return_name_from_course_id(course_id, group_time)
+
+def create_array_of_people_after_filtering(arr):
+    new_arr = []
+    for personal_information in arr:
+        new_arr.append(personal_information["name"])
+    return new_arr
 
 
+def print_groups(arr, team_size):
+    random.shuffle(arr)
+    counter = 0
+    for person in arr:
+        if counter == team_size:
+            print("-----------")
+            counter = 0
+        else:
+            print(person)
+            counter += 1
 
-#def match_courses(course_id, team_size, group_time):
 
+def match_teams(course_id, team_size, group_time):
+    arr = filter_id_group_time(course_id, group_time)
+    people_arr = create_array_of_people_after_filtering(arr)
+    print_groups(people_arr, team_size)
 
 
 def main():
     print(start_message)
-    request_dict = give_me_dict_from_json_api()
+
     while True:
         command = split_command_str(input("Enter command>"))
-
         if the_command(command, "list_courses"):
-            courses_array = list_courses(request_dict)
             print_arr(courses_array)
-
-       # elif the_command(command, "match_teams"):
-
-
+        elif the_command(command, "match_teams"):
+            match_teams(int(command[1]), int(command[2]), int(command[3]))
         else:
             print(unknown_command())
 
