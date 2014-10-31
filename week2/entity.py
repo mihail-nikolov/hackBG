@@ -30,6 +30,7 @@ class Entity:
 
     def equip_weapon(self, weapon):
         self.weapon = weapon
+       #print("Weapon Equipped")
 
     def has_weapon(self):
         if self.weapon is not None:
