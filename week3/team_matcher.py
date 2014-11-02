@@ -115,9 +115,11 @@ def main():
             print_arr(courses_array)
         elif the_command(command, "match_teams"):
             match_teams(int(command[1]), int(command[2]), int(command[3]))
+        elif the_command(command, "finish"):
+            break
         else:
             print(unknown_command())
-
+#трябва да го направя като филтрира да прави deepcopy от json object
 
 if __name__ == '__main__':
     main()

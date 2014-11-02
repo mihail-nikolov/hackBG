@@ -8,15 +8,26 @@ class Playlist:
 
     @staticmethod
     def load(file_name):
-        file = open("test_file.txt", "r")
-        content = file.read()
-        file.close()
-        json_cont = json.loads(content)
-        return Playlist(file_name)
+        #file_content = self._read_file(file_name)
+        with open(file_name, 'r') as file_content:
+            file_data = json.load(file_content)
+        playlist = Playlist(file_data['name'])
+        for song in file_data['songs']:
+            playlist.add_song(
+                Song(song['title'], song['artist'], song['album'], song['rating'], song['length'], song['bitrate']))
+        return playlist
 
     def __init__(self, name):
         self.name = name
         self.songs = []
+#защо горе не работи read_file?????????????????!!!!!
+
+    def _read_file(self, file_name):
+        file = open(file_name, 'r')
+        file_content = file.read()
+        file_content = json.loads(file_content)
+        file.close()
+        return file_content
 
     def add_song(self, song_name):
         self.songs.append(song_name)
@@ -71,7 +82,7 @@ class Playlist:
         file.write(json.dumps(json_dic))
         file.close()
 
-
+"""
 new_playlist = Playlist("my_playlist")
 enter_song = Song("Enter sandman", "Metallica", "Balck album", 2, 300, 192)
 harvester_song = Song("Harvester of sorrow", "Metallica", "...And justice for all", 3, 300, 150)
@@ -81,5 +92,7 @@ new_playlist.add_song(harvester_song)
 new_playlist.add_song(enter_song)
 #new_playlist.save("json_file.txt")
 
+
 loading_playlist = Playlist.load("test_file.txt")
-print(loading_playlist.songs)
+print(loading_playlist.str_func())
+"""

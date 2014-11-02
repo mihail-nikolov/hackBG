@@ -19,11 +19,5 @@ class SongTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             harvester_song.rate(200)
 
-
-
-
-
-
-
 if __name__ == '__main__':
     unittest.main()
