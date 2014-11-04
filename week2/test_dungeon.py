@@ -2,6 +2,7 @@ import unittest
 from dungeon import Dungeon
 from hero import Hero
 from orc import Orc
+from weapon import Weapon
 
 
 class DungeonTests(unittest.TestCase):
@@ -144,12 +145,68 @@ class DungeonTests(unittest.TestCase):
         self.assertEqual(answer2, "player_2")
         self.assertEqual(answer3, "player_1")
 
-   # def test_
-# have to make tests for _make_some_actions,
-#_make_changes_after_fight, start_fight
+    def test_give_me_random_coordinates(self):
+        matrix = self.single_loc_map.map_array
+        a, b = self.single_loc_map._give_me_random_coordinates(matrix)
+        self.assertIn(a, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+        self.assertIn(b, [0, 1, 2, 3, 4])
+
+    def test_check_for_equal_weapon_coordinates_false1(self):
+        answer = self.single_loc_map._check_for_equal_player_coordinates("player_1")
+        self.assertFalse(answer)
+
+    def test_check_for_equal_weapon_coordinates_false2(self):
+        axe = Weapon("axe", 10, 0.5)
+        self.paladin.equip_weapon(axe)
+        answer = self.single_loc_map._check_for_equal_player_coordinates("player_1")
+        self.assertFalse(answer)
+
+    def test_start_fight_both_alive(self):
+        fight_map = Dungeon("fight_map.txt")
+        blademaster = Orc("Yurnero", 120, 1.2)
+        fight_map.spawn("player_1", self.paladin)
+        fight_map.spawn("player_2", blademaster)
+        fight_map.move("player_1", "right")
+        fight_map.move("player_2", "left")
+        fight_map.move("player_1", "right")
+        self.assertTrue(self.paladin.is_alive())
+        self.assertTrue(blademaster.is_alive())
+
+    def test_start_fight_blademaster_dead(self):
+        axe = Weapon("axe", 10, 0.5)
+        blademaster = Orc("Yurnero", 120, 1.2)
+        self.paladin.equip_weapon(axe)
+        fight_map = Dungeon("fight_map.txt")
+        fight_map.spawn("player_1", self.paladin)
+        fight_map.spawn("player_2", blademaster)
+        fight_map.move("player_1", "right")
+        fight_map.move("player_2", "left")
+        fight_map.move("player_1", "right")
+        expected_arr = [['.', '.', 'H', '.']]
+        self.assertTrue(self.paladin.is_alive())
+        self.assertFalse(blademaster.is_alive())
+        #testing _make_changes_after_fight
+        self.assertEqual(fight_map.map_array, expected_arr)
+
+    def test_start_fight_paladin_dead(self):
+        axe = Weapon("axe", 10, 0.5)
+        blademaster = Orc("Yurnero", 120, 1.2)
+        blademaster.equip_weapon(axe)
+        fight_map = Dungeon("fight_map.txt")
+        fight_map.spawn("player_1", self.paladin)
+        fight_map.spawn("player_2", blademaster)
+        fight_map.move("player_1", "right")
+        fight_map.move("player_2", "left")
+        fight_map.move("player_1", "right")
+        expected_arr = [['.', '.', 'O', '.']]
+        self.assertFalse(self.paladin.is_alive())
+        self.assertTrue(blademaster.is_alive())
+        #testing _make_changes_after_fight
+        self.assertEqual(fight_map.map_array, expected_arr)
+
 
 if __name__ == '__main__':
     unittest.main()
 
-#I did not test give_me_random_coordinates, give_me_weapon_coordinates
-#_check_for_equal_weapon_coordinates
+#I did not test give_me_weapon_coordinates
+#_check_for_equal_weapon_coordinates and make_some_acctions
