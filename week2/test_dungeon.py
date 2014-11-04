@@ -1,9 +1,15 @@
 import unittest
 from dungeon import Dungeon
 from hero import Hero
+from orc import Orc
 
 
 class DungeonTests(unittest.TestCase):
+
+    def setUp(self):
+        self.single_loc_map = Dungeon("single_map.txt")
+        self.paladin = Hero("Arthas", 100, "Warhammer")
+        self.single_loc_map.spawn("player_1", self.paladin)
 
     def test_dungeon_init(self):
         new_dungeon = Dungeon("new_dungeon.txt")
@@ -22,8 +28,7 @@ class DungeonTests(unittest.TestCase):
     def test_spawn_return_false(self):
         false_map = Dungeon("false_map.txt")
         tmp_arr = false_map.map_array
-        paladin = Hero("Arthas", 100, "Warhammer")
-        self.assertFalse(false_map.spawn("player_1", paladin))
+        self.assertFalse(false_map.spawn("player_1", self.paladin))
         self.assertEqual(false_map.map_array, tmp_arr)
 
     def test_spawn_single_location(self):
@@ -32,10 +37,7 @@ class DungeonTests(unittest.TestCase):
                         ['#', '.', '#', '#', '#', 'S', '#', '#', '#', '.'],
                         ['#', '.', '.', '.', '.', '.', '#', '#', '#', '.'],
                         ['#', '#', '#', '.', '#', '#', '#', '#', '#', '#']]
-        single_loc_map = Dungeon("single_map.txt")
-        paladin = Hero("Arthas", 100, "Warhammer")
-        single_loc_map.spawn("player_1", paladin)
-        self.assertEqual(single_loc_map.map_array, expected_arr)
+        self.assertEqual(self.single_loc_map.map_array, expected_arr)
 
     def test_moving_right_true(self):
         expected_arr = [['.', 'H', '#', '#', '.', '.', '.', '.', '.', '.'],
@@ -43,11 +45,8 @@ class DungeonTests(unittest.TestCase):
                         ['#', '.', '#', '#', '#', 'S', '#', '#', '#', '.'],
                         ['#', '.', '.', '.', '.', '.', '#', '#', '#', '.'],
                         ['#', '#', '#', '.', '#', '#', '#', '#', '#', '#']]
-        single_loc_map = Dungeon("single_map.txt")
-        paladin = Hero("Arthas", 100, "Warhammer")
-        single_loc_map.spawn("player_1", paladin)
-        single_loc_map.move("player_1", "right")
-        self.assertEqual(single_loc_map.map_array, expected_arr)
+        self.single_loc_map.move("player_1", "right")
+        self.assertEqual(self.single_loc_map.map_array, expected_arr)
 
     def test_moving_down_true(self):
         expected_arr = [['.', '.', '#', '#', '.', '.', '.', '.', '.', '.'],
@@ -55,41 +54,102 @@ class DungeonTests(unittest.TestCase):
                         ['#', '.', '#', '#', '#', 'S', '#', '#', '#', '.'],
                         ['#', '.', '.', '.', '.', '.', '#', '#', '#', '.'],
                         ['#', '#', '#', '.', '#', '#', '#', '#', '#', '#']]
-        single_loc_map = Dungeon("single_map.txt")
-        paladin = Hero("Arthas", 100, "Warhammer")
-        single_loc_map.spawn("player_1", paladin)
-        single_loc_map.move("player_1", "right")
-        single_loc_map.move("player_1", "down")
-        self.assertEqual(single_loc_map.map_array, expected_arr)
+        self.single_loc_map.move("player_1", "right")
+        self.single_loc_map.move("player_1", "down")
+        self.assertEqual(self.single_loc_map.map_array, expected_arr)
 
     def test_moving_left_False(self):
-        single_loc_map = Dungeon("single_map.txt")
-        paladin = Hero("Arthas", 100, "Warhammer")
-        single_loc_map.spawn("player_1", paladin)
-        self.assertFalse(single_loc_map.move("player_1", "left"))
+        self.assertFalse(self.single_loc_map.move("player_1", "left"))
 
     def test_moving_up_False(self):
-        single_loc_map = Dungeon("single_map.txt")
-        paladin = Hero("Arthas", 100, "Warhammer")
-        single_loc_map.spawn("player_1", paladin)
-        self.assertFalse(single_loc_map.move("player_1", "up"))
+        self.assertFalse(self.single_loc_map.move("player_1", "up"))
 
     def test_moving_wrong_input(self):
-        single_loc_map = Dungeon("single_map.txt")
-        paladin = Hero("Arthas", 100, "Warhammer")
-        single_loc_map.spawn("player_1", paladin)
-        self.assertFalse(single_loc_map.move("player_1", "dqsno"))
+        self.assertFalse(self.single_loc_map.move("player_1", "dqsno"))
+
+    def test_give_me_player_own_coordinates(self):
+        x, y = self.single_loc_map._give_me_own_players_coordinates("player_1")
+        self.assertEqual(x, 0)
+        self.assertEqual(y, 0)
+
+    def test_return_entity_letter(self):
+        self.assertEqual(self.single_loc_map._return_entity_letter(self.paladin), "H")
+
+    def test_give_me_own_players_coordinates(self):
+        x, y = self.single_loc_map._give_me_own_players_coordinates("player_1")
+        self.assertEqual(x, 0)
+        self.assertEqual(y, 0)
+
+    def test_change_own_players_coordinates_down_right(self):
+        self.single_loc_map._change_own_players_coordinates("player_1", "right")
+        self.single_loc_map._change_own_players_coordinates("player_1", "down")
+        tmp_arr = self.single_loc_map.entities_dic["player_1"]
+        x = tmp_arr[0]
+        y = tmp_arr[1]
+        self.assertEqual(x, 1)
+        self.assertEqual(y, 1)
+
+    def test_give_me_player_instance(self):
+        instance = self.single_loc_map._give_me_player_instance("player_1")
+        self.assertEqual(self.paladin, instance)
+
+    def test_move_left_right(self):
+        self.assertFalse(self.single_loc_map._move_left_right("player_1", "left"))
+        expected_arr = [['.', 'H', '#', '#', '.', '.', '.', '.', '.', '.'],
+                        ['#', '.', '#', '#', '.', '.', '#', '#', '#', '.'],
+                        ['#', '.', '#', '#', '#', 'S', '#', '#', '#', '.'],
+                        ['#', '.', '.', '.', '.', '.', '#', '#', '#', '.'],
+                        ['#', '#', '#', '.', '#', '#', '#', '#', '#', '#']]
+        self.single_loc_map._move_left_right("player_1", "right")
+        self.assertEqual(self.single_loc_map.map_array, expected_arr)
+        tmp_arr = self.single_loc_map.entities_dic["player_1"]
+        x = tmp_arr[0]
+        y = tmp_arr[1]
+        self.assertEqual(x, 1)
+        self.assertEqual(y, 0)
+
+    def test_move_up_down(self):
+        self.assertFalse(self.single_loc_map._move_up_down("player_1", "down"))
+        self.assertFalse(self.single_loc_map._move_up_down("player_1", "up"))
+        expected_arr = [['.', '.', '#', '#', '.', '.', '.', '.', '.', '.'],
+                        ['#', 'H', '#', '#', '.', '.', '#', '#', '#', '.'],
+                        ['#', '.', '#', '#', '#', 'S', '#', '#', '#', '.'],
+                        ['#', '.', '.', '.', '.', '.', '#', '#', '#', '.'],
+                        ['#', '#', '#', '.', '#', '#', '#', '#', '#', '#']]
+        self.single_loc_map._move_left_right("player_1", "right")
+        self.single_loc_map._move_up_down("player_1", "down")
+        self.assertEqual(self.single_loc_map.map_array, expected_arr)
+        tmp_arr = self.single_loc_map.entities_dic["player_1"]
+        x = tmp_arr[1]
+        y = tmp_arr[1]
+        self.assertEqual(x, 1)
+        self.assertEqual(y, 1)
+
+    def test_check_for_equal_player_coordinates(self):
+        blademaster = Orc("Yurnero", 120, 1.2)
+        self.single_loc_map.spawn("player_2", blademaster)
+        answer1 = self.single_loc_map._check_for_equal_player_coordinates("player_1")
+        self.assertFalse(answer1)
+        self.single_loc_map.move("player_1", "right")
+        self.single_loc_map.move("player_2", "down")
+        self.single_loc_map.move("player_1", "down")
+        self.single_loc_map.move("player_2", "left")
+        self.single_loc_map.move("player_1", "down")
+        self.single_loc_map.move("player_2", "left")
+        self.single_loc_map.move("player_1", "down")
+        self.single_loc_map.move("player_2", "left")
+        self.single_loc_map.move("player_2", "left")
+        answer2 = self.single_loc_map._check_for_equal_player_coordinates("player_1")
+        answer3 = self.single_loc_map._check_for_equal_player_coordinates("player_2")
+        self.assertEqual(answer2, "player_2")
+        self.assertEqual(answer3, "player_1")
+
+   # def test_
+# have to make tests for _make_some_actions,
+#_make_changes_after_fight, start_fight
 
 if __name__ == '__main__':
     unittest.main()
 
-#как да тестваам private функция?!!?
-"""
-    def test_give_me_player_own_coordinates(self):
-        single_loc_map = Dungeon("single_map.txt")
-        paladin = Hero("Arthas", 100, "Warhammer")
-        single_loc_map.spawn("player_1", paladin)
-        x, y = single_loc_map.__give_me_player_own_coordinates("player_1")
-        self.assertEqual(x, 0)
-        self.assertEqual(y, 0)
-"""
+#I did not test give_me_random_coordinates, give_me_weapon_coordinates
+#_check_for_equal_weapon_coordinates
