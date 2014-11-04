@@ -52,7 +52,6 @@ class Dungeon:
         if self.map_array[y][x] == ".":
             self.map_array[y][x] = "W"
             self.weapons[weapon] = [x, y]
-            self.print_map()
         elif self.map_array[y][x] == "#" or self.map_array[y][x] == "W":
             self.spawn_weapon(weapon)
         elif self.map_array[y][x] == "H" or self.map_array[y][x] == "O":
@@ -62,11 +61,6 @@ class Dungeon:
                     pl_inst = self.__give_me_player_intance(player)
                     pl_inst.equip_weapon(weapon)
                     print("{} equipped {}".format(pl_inst.name, weapon.w_type))
-                    self.weapons[weapon] = [None, None]
-
-#spawn_weapon is started more than neccessary and when
-#I want to delete weapon from self.weapons it throws an error
-#I have no problem to delete a weapon from weapons, only in the function up there!!!
 
     def start_fight(self, player1, player2):
         print("Characters are fighting...")
@@ -186,9 +180,6 @@ class Dungeon:
             player_enemy = self._check_for_equal_player_coordinates(player_name)
             self.start_fight(player_name, player_enemy)
 
-#the _check_for_equal_player_coordinates is working
-#the problem is only up there!!!!!!
-
     def __give_me_random_coordinates(self, matrix):
         y = random.randrange(0, len(matrix))
         row = matrix[0]
@@ -211,11 +202,13 @@ axe = Weapon("axe", 10, 0.5)
 sword = Weapon("sword", 10, 0.8)
 the_map.spawn("player_1", paladin)
 the_map.spawn("player_2", blademaster)
-paladin.equip_weapon(axe)
-blademaster.equip_weapon(sword)
+#paladin.equip_weapon(axe)
+#blademaster.equip_weapon(sword)
 the_map.spawn_weapon(axe)
 the_map.spawn_weapon(sword)
 the_map.print_map()
+"""
+
 the_map.move("player_1", "right")
 the_map.move("player_2", "down")
 the_map.print_map()
@@ -237,3 +230,4 @@ print("----------------")
 the_map.move("player_2", "left")
 the_map.print_map()
 print("----------------")
+"""

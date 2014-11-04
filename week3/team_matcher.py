@@ -119,7 +119,6 @@ def main():
             break
         else:
             print(unknown_command())
-#трябва да го направя като филтрира да прави deepcopy от json object
 
 if __name__ == '__main__':
     main()
