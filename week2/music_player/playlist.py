@@ -4,23 +4,11 @@ from song import Song
 
 class Playlist:
 
-    min_quality = 192
-
-    @staticmethod
-    def load(file_name):
-        #file_content = self._read_file(file_name)
-        with open(file_name, 'r') as file_content:
-            file_data = json.load(file_content)
-        playlist = Playlist(file_data['name'])
-        for song in file_data['songs']:
-            playlist.add_song(
-                Song(song['title'], song['artist'], song['album'], song['rating'], song['length'], song['bitrate']))
-        return playlist
+    min_quality = 192000
 
     def __init__(self, name):
         self.name = name
         self.songs = []
-#защо горе не работи read_file?????????????????!!!!!
 
     def _read_file(self, file_name):
         file = open(file_name, 'r')
@@ -28,12 +16,18 @@ class Playlist:
         file_content = json.loads(file_content)
         file.close()
         return file_content
+#have to be made some corrrections in add and remove song!
+#maybe the info could be get from existing arr of song objects!
 
     def add_song(self, song_name):
         self.songs.append(song_name)
 
-    def remove_song(self, song_name):
-        self.songs.remove(song_name)
+    def remove_song(self, song_title):
+        new_list = []
+        for song in self.songs:
+            if song.title != song_title:
+                new_list.append(song)
+        self.songs = new_list
 
     def total_length(self):
         tot_len = 0
@@ -41,12 +35,19 @@ class Playlist:
             tot_len += song.length
         return tot_len
 
-    def remove_bad_quality(self):
-        tmp_list = []
+    def remove_disrated(self, rating):
+        rated_songs = []
         for song in self.songs:
-            if song.bitrate >= Playlist.min_quality:
-                tmp_list.append(song)
-        self.songs = tmp_list
+            if int(song.rating) >= rating:
+                rated_songs.append(song)
+        self.songs = rated_songs
+
+    def remove_bad_quality(self):
+        new_list = []
+        for song in self.songs:
+            if int(song.bitrate) >= Playlist.min_quality:
+                new_list.append(song)
+        self.songs = new_list
 
     def show_artists(self):
         artists_arr = []
@@ -54,12 +55,6 @@ class Playlist:
             if song.artist not in artists_arr:
                 artists_arr.append(song.artist)
         return artists_arr
-
-    #def _make_seconds_to_hours_minutes_seconds(self, number):
-     #   m, s = divmod(seconds, 60)
-      #  h, m = divmod(m, 60)
-       # time_str = "%d:%02d:%02d" % (h, m, s)
-        #return time_str
 
     def str_func(self):
         playlist_string = ""
@@ -82,17 +77,30 @@ class Playlist:
         file.write(json.dumps(json_dic))
         file.close()
 
-"""
-new_playlist = Playlist("my_playlist")
-enter_song = Song("Enter sandman", "Metallica", "Balck album", 2, 300, 192)
-harvester_song = Song("Harvester of sorrow", "Metallica", "...And justice for all", 3, 300, 150)
-hells_song = Song("Hells Bells", "Ac/DC", "Back in Black", 2, 240, 256)
-new_playlist.add_song(hells_song)
-new_playlist.add_song(harvester_song)
-new_playlist.add_song(enter_song)
-#new_playlist.save("json_file.txt")
+    def load(self, file_name):
+        file_content = self._read_file(file_name)
+        #file_data = json.load(file_content)
+        for song in file_content['songs']:
+            self.add_song(
+                Song(song['title'], song['artist'], song['album'], song['rating'], song['length'], song['bitrate']))
 
 
-loading_playlist = Playlist.load("test_file.txt")
-print(loading_playlist.str_func())
 """
+   @staticmethod
+    def load(file_name):
+        #file_content = self._read_file(file_name)
+        with open(file_name, 'r') as file_content:
+            file_data = json.load(file_content)
+        playlist = Playlist(file_data['name'])
+        for song in file_data['songs']:
+            playlist.add_song(
+                Song(song['title'], song['artist'], song['album'], song['rating'], song['length'], song['bitrate']))
+        return playlist
+"""
+#защо тук не работи read_file?????????????????!!!!!
+
+    #def _make_seconds_to_hours_minutes_seconds(self, number):
+     #   m, s = divmod(seconds, 60)
+      #  h, m = divmod(m, 60)
+       # time_str = "%d:%02d:%02d" % (h, m, s)
+        #return time_str

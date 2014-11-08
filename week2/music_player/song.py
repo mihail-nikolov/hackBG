@@ -12,7 +12,7 @@ class Song:
 
     def rate(self, number):
         if number < Song.min_rating or number > Song.max_rating:
-            error_message = "ratin must be from {} to {}".format(Song.min_rating, Song.max_rating)
+            error_message = "rating must be from {} to {}".format(Song.min_rating, Song.max_rating)
             raise ValueError(error_message)
         else:
             self.rating = self.rate

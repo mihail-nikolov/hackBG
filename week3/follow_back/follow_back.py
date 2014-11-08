@@ -1,4 +1,6 @@
-class Graph():
+class DirectedGraph():
+
+    checked_nodes = []
 
     def __init__(self):
         self.nodes = {}
@@ -18,28 +20,21 @@ class Graph():
         return self.nodes[node]
 
     def path_between(self, nodeA, nodeB):
-        #условие за масива с обходени върхове
-        print(nodeA)
+        DirectedGraph.checked_nodes.append(nodeA)
         if len(self.nodes[nodeA]) == 0:
             return False
-        if nodeA == nodeB:
+        elif nodeA == nodeB:
             return False
-        if nodeA not in self.nodes or nodeB not in self.nodes:
+        elif nodeA not in self.nodes or nodeB not in self.nodes:
             return False
-        if nodeB in self.nodes[nodeA]:
+        elif nodeB in self.nodes[nodeA]:
             return True
         for node in self.nodes[nodeA]:
-            if self.path_between(node, nodeB) is True:
+            if node in DirectedGraph.checked_nodes:
+                return False
+            if self.path_between(node, nodeB):
                 return True
         return False
 
-
-new_graph = Graph()
-new_graph.add_edge("Ivan", "Georgi")
-new_graph.add_edge("Ivan", "Pesho")
-new_graph.add_edge("Ivan", "Misho")
-new_graph.add_edge("Stamat", "Lubo")
-new_graph.add_edge("Stamat", "Stamen")
-#new_graph.add_edge("Georgi", "Stamat")
-new_graph.add_edge("Misho", "Ivan")
-print(new_graph.path_between("Ivan", "Stamen"))
+    def __str__(self):
+        print(self.nodes)

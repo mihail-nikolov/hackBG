@@ -45,7 +45,9 @@ class Music_crawler:
         song_tags = self._give_me_tags(song_file)
         song_length = self._get_length(song_file)
         song_bitrate = self._get_bitrate(song_file)
-        song = Song(str(song_tags['title']), str(song_tags['artist']), str(song_tags['album']), str(self.def_rate), str(song_length), str(song_bitrate))
+        song = Song(str(song_tags['title']), str(song_tags['artist']),
+                    str(song_tags['album']), str(self.def_rate),
+                    str(song_length), str(song_bitrate))
         return song
 
     def generate_playlist(self):
@@ -58,7 +60,9 @@ class Music_crawler:
             the_playlist.add_song(song)
         return the_playlist
 
-
+"""
 new_crawler = Music_crawler("/home/mihail/Music/")
 playlist = new_crawler.generate_playlist()
 print(playlist.str_func())
+
+"""
