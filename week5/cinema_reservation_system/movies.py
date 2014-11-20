@@ -17,5 +17,4 @@ class Movies():
     def show_movies(self):
         result = self.cursor.execute('''SELECT * FROM Movies
                                                ORDER BY rating''')
-        for row in result:
-            print(row)
+        return result

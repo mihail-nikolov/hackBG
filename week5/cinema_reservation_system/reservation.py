@@ -9,16 +9,17 @@ class Reservation():
         cursor = conn.cursor()
         self.cursor = cursor
 
-    def add_projection(self, movie_id, type, movie_date, time):
-        self.cursor.execute("""INSERT INTO Projections
+    def make_reservation(self, movie_id, type, movie_date, time):
+        self.cursor.execute("""INSERT INTO Reservations
                             (movie_id, type, movie_date, time)
                             VALUES(?, ?, ?, ?)""",
                             (movie_id, type, movie_date, time))
         self.conn.commit()
 
-    def show_movie_projection(self, movie_id):
-        result = self.cursor.execute('''SELECT id, type,
-                                movie_date, time FROM Projections
-                                WHERE movie_id = ? ''', (movie_id, ))
+    def show_reservations(self, movie_id):
+        result = self.cursor.execute('''SELECT * FROM reservations''')
         for row in result:
             print(row)
+
+    def cancel_reservation(name):
+        pass
