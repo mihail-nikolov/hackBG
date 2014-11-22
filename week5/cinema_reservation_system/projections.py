@@ -15,7 +15,6 @@ class Projections():
     def _make_halls(self):
         self.proj_halls = {}
         result = self.cursor.execute('''SELECT id FROM Projections''').fetchall()
-        #res_arr = []
         for el in result:
             matrix = []
             for i in range(self.hall_rows):
@@ -56,22 +55,39 @@ class Projections():
         row = place[0] - 1
         col = place[1] - 1
         hall = self.proj_halls[proj_id]
-        is_in_range = col <= self.hall_cols and row <= self.hall_rows
-        is_free = hall[row][col] == "."
-        if is_free and is_in_range:
-            return True
+        a_row_len = len(self.proj_halls[1][0])
+        a_col_len = len(self.proj_halls[1])
+        is_in_range = col in range(a_col_len) and row in range(a_row_len)
+        if is_in_range:
+            if hall[row][col] == ".":
+                return True
         return False
 
     def write_x(self, proj_id, place):
-        row = place[0] - 1
-        col = place[1] - 1
+        proj_id = int(proj_id)
+        row = int(place[0] - 1)
+        col = int(place[1] - 1)
         self.proj_halls[proj_id][row][col] = "X"
 
+    def del_x(self, proj_id, places_arr):
+        proj_id = int(proj_id)
+        for place in places_arr:
+            row = int(place[0] - 1)
+            col = int(place[1] - 1)
+            self.proj_halls[proj_id][row][col] = "."
+
+    def _get_movie_date_time(self, proj_id):
+        proj_id = int(proj_id)
+        result = self.cursor.execute('''SELECT movie_date, time
+                                FROM Projections
+                                WHERE id = ? ''', (proj_id, ))
+        return result
 
 
 
-db = "cinema.db"
-proj = Projections(db)
-proj._make_halls()
-print(proj.is_there_place(2, 2))
-print(proj.proj_halls[1])
+
+#db = "cinema.db"
+#proj = Projections(db)
+#proj._make_halls()
+#print(proj.is_there_place(2, 2))
+#print(proj.proj_halls[1])

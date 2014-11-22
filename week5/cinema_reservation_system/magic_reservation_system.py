@@ -6,6 +6,7 @@ db = "cinema.db"
 movies = Movies(db)
 projections = Projections(db)
 reservation = Reservation(db)
+reservation.clear_reservation_on_stratup()
 
 
 def start_mess():
@@ -60,8 +61,27 @@ def unknown_command():
     return message
 
 
-def print_reserv(name, movie, seats, date, time):
-    pass
+def make_tickets_magic(arr, tickets, proj_id):
+    for ticket in range(int(tickets)):
+        place = split_command_str(input("Enter <row> <col>"))
+        the_place = [int(place[0]), int(place[1])]
+        while projections.is_place_OK(proj_id, the_place) is False:
+            print("This seat does not exists or the seat is taken")
+            place = split_command_str(input("Enter <row> <col>"))
+            the_place = [int(place[0]), int(place[1])]
+        arr.append(the_place)
+        projections.write_x(proj_id, the_place)
+
+
+def print_reserv(movie, seats, proj_info):
+    message = "This is your reservation:\
+    \n Movie: {}\
+    \n Date and Time: {}\
+    \n Seats: {}\
+    \n Step 5 (Confirm - type 'finalize') > finalize\
+    \n Thanks.".format(movie, proj_info, seats)
+    print(message)
+
 
 def main():
 
@@ -86,39 +106,33 @@ def main():
             m_id = input("Enter the movie ID:")
             if m_id == "give_up":
                 break
-            print_func(projections.show_movie_projection(m_id))
+            print_func(projections.show_movie_projection(int(m_id)))
             proj_id = input("Enter projection ID:")
             if proj_id == "give_up":
                 break
             theres_no_place = projections.is_there_place(proj_id, tickets) is False
             while theres_no_place:
-                "There enough seats for this projection"
+                print("There is not enough seats for this projection")
                 proj_id = input("Enter projection ID:")
                 if proj_id == "give_up":
                     break
-            print_hall(projections.proj_halls[proj_id])
+            print_hall(projections.proj_halls[int(proj_id)])
             places_arr = []
-            for ticket in range(int(tickets)):
-                place = split_command_str(input("Enter <row> <col>"))
-                the_place = [int(place[0]), int(place[1])]
-                while projections.is_place_OK(the_place) is False:
-                    "This seat does not exists or the seat is taken"
-                    place = split_command_str(input("Enter <row> <col>"))
-                    the_place = [int(place[0]), int(place[1])]
-                    if place == "give_up":
-                        break
-                places_arr.append(the_place)
-                projections.write_x(proj_id, the_place)
+            make_tickets_magic(places_arr, tickets, proj_id)
+            #movie = movies._get_movie_by_id(int(m_id))
+            proj_info = projections._get_movie_date_time(proj_id)
+            print_reserv("blqblq", places_arr, proj_info)
             confirm = input("Confirm - type 'finalize'")
             if confirm == "finalize":
-                reservation.make_reservation(name, places_arr)
+                reservation.make_reservation(name, places_arr, proj_id)
             else:
+                projections.del_x(proj_id, places_arr)
                 print("You refused your reservation. Bye")
-                break
 
         elif the_command(command, "cancel_reservation"):
             name = input("What is your name")
             reservation.cancel_reservation(name)
+            print("your reservation has been deleted")
 
         elif the_command(command, "exit"):
             print("GoodBye")
