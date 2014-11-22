@@ -18,3 +18,9 @@ class Movies():
         result = self.cursor.execute('''SELECT * FROM Movies
                                                ORDER BY rating''')
         return result
+
+    def _get_movie_name(self, movie_id):
+        movie_id = int(movie_id)
+        result = self.cursor.execute('''SELECT name FROM Movies
+                                        WHERE id = ?''', (movie_id,)).fetchone()
+        return result[0]

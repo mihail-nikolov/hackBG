@@ -80,14 +80,14 @@ class Projections():
         proj_id = int(proj_id)
         result = self.cursor.execute('''SELECT movie_date, time
                                 FROM Projections
-                                WHERE id = ? ''', (proj_id, ))
-        return result
+                                WHERE id = ? ''', (proj_id, )).fetchall()
+        return result[0][0], result[0][1]
 
 
 
 
-#db = "cinema.db"
-#proj = Projections(db)
-#proj._make_halls()
+db = "cinema.db"
+proj = Projections(db)
 #print(proj.is_there_place(2, 2))
 #print(proj.proj_halls[1])
+print(proj._get_movie_date_time(1))

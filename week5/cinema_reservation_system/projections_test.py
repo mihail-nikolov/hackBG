@@ -16,5 +16,10 @@ class Projections_test(unittest.TestCase):
         #TESTING SHOW PROJECTIONS
         projections.show_movie_projection(2)
 
+    def test_get_date_time(self):
+        db = "cinema.db"
+        projections = Projections(db)
+        result = projections._get_movie_date_time(1)
+        self.assertEqual(result, ("2014-04-01", "19:10"))
 if __name__ == '__main__':
     unittest.main()

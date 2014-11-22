@@ -13,5 +13,12 @@ class Movies_test(unittest.TestCase):
         #TESTING SHOW MOVIES
         movies.show_movies()
 
+    def test_get_movie_name(self):
+        db = "cinema.db"
+        movies = Movies(db)
+        movie = movies._get_movie_name(1)
+        self.assertEqual(movie, "The Hunger Games: Catching Fire")
+
+
 if __name__ == '__main__':
     unittest.main()

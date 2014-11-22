@@ -73,13 +73,13 @@ def make_tickets_magic(arr, tickets, proj_id):
         projections.write_x(proj_id, the_place)
 
 
-def print_reserv(movie, seats, proj_info):
+def print_reserv(movie, seats, date, time):
     message = "This is your reservation:\
     \n Movie: {}\
-    \n Date and Time: {}\
+    \n Date and Time: {} {}\
     \n Seats: {}\
     \n Step 5 (Confirm - type 'finalize') > finalize\
-    \n Thanks.".format(movie, proj_info, seats)
+    \n Thanks.".format(movie, date, time, seats)
     print(message)
 
 
@@ -119,9 +119,9 @@ def main():
             print_hall(projections.proj_halls[int(proj_id)])
             places_arr = []
             make_tickets_magic(places_arr, tickets, proj_id)
-            #movie = movies._get_movie_by_id(int(m_id))
-            proj_info = projections._get_movie_date_time(proj_id)
-            print_reserv("blqblq", places_arr, proj_info)
+            movie = movies._get_movie_name(m_id)
+            date, time = projections._get_movie_date_time(proj_id)
+            print_reserv(movie, places_arr, date, time)
             confirm = input("Confirm - type 'finalize'")
             if confirm == "finalize":
                 reservation.make_reservation(name, places_arr, proj_id)
