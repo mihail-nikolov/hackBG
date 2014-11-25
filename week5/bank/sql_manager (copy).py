@@ -11,6 +11,9 @@ import getpass
 
 conn = sqlite3.connect("bank.db")
 cursor = conn.cursor()
+block_min = 5
+block_sec = 3000
+wr_times_in = 5
 
 
 def create_clients_table():
@@ -20,8 +23,8 @@ def create_clients_table():
                 password TEXT,
                 balance REAL DEFAULT 0,
                 message TEXT,
-                is_blocked BOOLEAN DEFAULT False,
-                blocked_at INTEGER DEFAULT 0,
+                last_log TEXT,
+                failed_logs INTEGER DEFAULT 0,
                 email TEXT)''')
     conn.commit()
 
@@ -56,36 +59,47 @@ def check_password(existing_pass, entered_pass):
     return existing_pass == entered_pass
 
 
-def block_user(username):
+def block_conditions(result_obj):
+    wr_pass_input_times = int(result_obj[0])
+    date = datetime.datetime.now() + datetime.timedelta(minutes=block_min)
+    cur_time = calendar.timegm(date.utctimetuple())
+
+    last_log = result_obj[1]
+    if last_log is None:
+        last_log = cur_time
+    else:
+        last_log = int(result_obj[1])
+    print('cur_time:{}'.format(cur_time))
+    print('last_log:{}'.format(last_log))
+    more_wr_inputs = wr_pass_input_times >= wr_times_in
+    block_time_passed = cur_time - last_log >= block_sec
+    print("time passed: {}".format(last_log - cur_time))
+    if more_wr_inputs and block_time_passed:
+        return True
+    elif wr_pass_input_times >= block_min:
+        return False
+
+
+def increase_failed_logs(username):
     date = datetime.datetime.now()
-    time_blocked = calendar.timegm(date.utctimetuple())
-    cursor.execute('''UPDATE clients SET blocked_at = ?, is_blocked = ?
-                    WHERE username = ? ''', (time_blocked, 'True', username))
+    cur_time = calendar.timegm(date.utctimetuple())
+    cursor.execute('''UPDATE clients SET last_log = ?,
+                        failed_logs = failed_logs + 1
+                        WHERE username = ? ''', (cur_time, username))
     conn.commit()
-
-
-def unbclock_user(username):
-    time_blocked = 0
-    cursor.execute('''UPDATE clients SET blocked_at = ?, is_blocked = ?
-                    WHERE username = ? ''', (time_blocked, 'False', username))
-    conn.commit()
-
-
-def get_user_bl_time(username):
-    result = cursor.execute('''SELECT blocked_at FROM
-                    clients WHERE username = ?
-                    LIMIT 1''', (username,)).fetchone()
-    return result[0]
-
-
-def is_blocked(username):
-    result = cursor.execute('''SELECT is_blocked FROM
-                    clients WHERE username = ?
-                    LIMIT 1''', (username,)).fetchone()
-    return result[0]
 
 
 def login(username):
+    result = cursor.execute('''SELECT failed_logs, last_log
+                                FROM clients WHERE username = ?
+                                LIMIT 1''', (username, )).fetchone()
+    if block_conditions(result):
+        cursor.execute('''UPDATE clients SET failed_logs = 0
+                          WHERE username = ?''', (username, ))
+        conn.commit()
+    elif block_conditions(result) is False:
+        print('You have 5 wrong passwords in a row')
+        return False
     cursor.execute('''SELECT id, username, balance, message FROM
                     clients WHERE username = ? LIMIT 1''', (username, ))
     user = cursor.fetchone()

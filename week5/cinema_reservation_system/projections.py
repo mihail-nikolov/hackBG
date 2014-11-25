@@ -82,12 +82,3 @@ class Projections():
                                 FROM Projections
                                 WHERE id = ? ''', (proj_id, )).fetchall()
         return result[0][0], result[0][1]
-
-
-
-
-db = "cinema.db"
-proj = Projections(db)
-#print(proj.is_there_place(2, 2))
-#print(proj.proj_halls[1])
-print(proj._get_movie_date_time(1))
