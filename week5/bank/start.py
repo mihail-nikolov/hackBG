@@ -124,7 +124,8 @@ def logged_menu(logged_user):
 
         elif command == 'changepass':
             username = logged_user.get_username()
-            mailed_code = sql_manager.send_mail_user(username)
+            mess_hash_code = sql_manager.get_hashcode()
+            mailed_code = sql_manager.send_mail_user(username, mess_hash_code)
             print("We have just sent you an email with hashcode\
                 \n To let you to change your password we have to\
                 \n make sure that you are the owner of the email.\
@@ -144,11 +145,54 @@ def logged_menu(logged_user):
         elif command == 'show-message':
             print(logged_user.get_message())
 
+        elif command == "withdraw":
+            username = logged_user.get_username()
+            money = int(input("type money: "))
+            balance = sql_manager.get_balance(username)
+            if money > balance:
+                print("you do not have enough money")
+            else:
+                input_TAN = input("type TAN: ")
+                if sql_manager.is_TAN_usable(username) is False:
+                    print("You have to get new TAN")
+                elif sql_manager.is_curr_TAN(username, input_TAN) is False:
+                    print("Input a valid TAN")
+                else:
+                    sql_manager.withdraw_money(username, money)
+                    sql_manager.increase_TAN_counter(username)
+                    print("You have Successfully withdrawed money")
+
+        elif command == "deposit":
+            username = logged_user.get_username()
+            money = int(input("type money: "))
+            input_TAN = input("type TAN: ")
+            if sql_manager.is_TAN_usable(username) is False:
+                print("You have to get new TAN")
+            elif sql_manager.is_curr_TAN(username, input_TAN) is False:
+                print("Input a valid TAN")
+            else:
+                sql_manager.deposit_money(username, money)
+                sql_manager.increase_TAN_counter(username)
+                print("You have Successfully deposited money")
+
+        elif command == "get-tan":
+            username = logged_user.get_username()
+            new_TAN = sql_manager.get_ran_str()
+
+            while sql_manager.is_TAN_used(username, new_TAN) is True:
+                new_TAN = sql_manager.get_ran_str()
+            sql_manager.make_TAN_changes(username, new_TAN)
+            sql_manager.send_mail_user(username, new_TAN)
+            print('We have sent you email with your new TAN')
+
         elif command == 'help':
             print("info - for showing account info")
             print("changepass - for changing passowrd")
             print("change-message - for changing users message")
             print("show-message - for showing users message")
+            print("withdraw - withdraw money")
+            print("deposit - deposit money")
+            print("get-tan - calculating new TAN")
 
 
 def main():

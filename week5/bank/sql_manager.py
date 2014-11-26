@@ -7,7 +7,8 @@ import calendar
 import uuid
 import smtplib
 import getpass
-
+TAN_len = 32
+TAN_use = 10
 
 conn = sqlite3.connect("bank.db")
 cursor = conn.cursor()
@@ -22,7 +23,9 @@ def create_clients_table():
                 message TEXT,
                 is_blocked BOOLEAN DEFAULT False,
                 blocked_at INTEGER DEFAULT 0,
-                email TEXT)''')
+                email TEXT,
+                TANs TEXT,
+                TAN_use_count INTEGER DEFAULT 0)''')
     conn.commit()
 
 
@@ -95,12 +98,17 @@ def login(username):
         return False
 
 
-def send_mail_user(username):
+def get_hashcode():
+    hash_code = uuid.uuid4().hex
+    return hash_code
+
+
+def send_mail_user(username, message):
     email = cursor.execute('''SELECT email
                                 FROM clients WHERE username = ?
                                 LIMIT 1''', (username, )).fetchone()
     email = email[0]
-    hash_code = uuid.uuid4().hex
+
     to = email
     gmail_user = 'mihailynikolov@gmail.com'
     gmail_pwd = getpass.getpass('Pass for company email:')
@@ -109,9 +117,84 @@ def send_mail_user(username):
     smtpserver.starttls()
     smtpserver.ehlo
     smtpserver.login(gmail_user, gmail_pwd)
-    smtpserver.sendmail(gmail_user, to, hash_code)
+    smtpserver.sendmail(gmail_user, to, message)
     smtpserver.close()
-    return hash_code
+    return message
 
 
-#send_mail_user("misho")
+def get_ran_str(str_len=32):
+    random = str(uuid.uuid4())
+    random = random.replace("-", "")
+    return random[:str_len]
+
+
+def is_TAN_used(username, TAN):
+    TANs = cursor.execute('''SELECT TANs
+                            FROM clients WHERE username = ?
+                            LIMIT 1''', (username, )).fetchone()
+    TANs = TANs[0]
+    TANs = str(TANs)
+    arr_TAN = TANs.split(", ")
+    if TAN in arr_TAN:
+        return True
+    return False
+
+
+def increase_TAN_counter(username):
+    cursor.execute('''UPDATE clients SET TAN_use_count = TAN_use_count + 1
+                    WHERE username = ? ''', (username, ))
+    conn.commit()
+
+
+def make_TAN_changes(username, new_TAN):
+    TANs = cursor.execute('''SELECT TANs
+                            FROM clients WHERE username = ?
+                            LIMIT 1''', (username, )).fetchone()
+    TANs = TANs[0]
+    TANs = str(TANs)
+    content_to_add = TANs + ", " + new_TAN
+    cursor.execute('''UPDATE clients SET TAN_use_count = 0,
+                    TANs = ?
+                    WHERE username = ? ''', (content_to_add, username))
+    conn.commit()
+
+
+def is_curr_TAN(username, TAN):
+    TANs = cursor.execute('''SELECT TANs
+                            FROM clients WHERE username = ?
+                            LIMIT 1''', (username, )).fetchone()
+    TANs = str(TANs[0])
+    arr_TAN = TANs.split(", ")
+    if TAN == arr_TAN[- 1]:
+        return True
+    return False
+
+
+def is_TAN_usable(username):
+    counter = cursor.execute('''SELECT TAN_use_count
+                            FROM clients WHERE username = ?
+                            LIMIT 1''', (username, )).fetchone()
+    counter = counter[0]
+    if counter >= TAN_use:
+        return False
+    return True
+
+
+def deposit_money(username, money):
+    cursor.execute('''UPDATE clients SET balance = balance + ?
+                    WHERE username = ? ''', (money, username))
+    conn.commit()
+
+
+def withdraw_money(username, money):
+    cursor.execute('''UPDATE clients SET balance = balance - ?
+                    WHERE username = ? ''', (money, username))
+    conn.commit()
+
+
+def get_balance(username):
+    balance = cursor.execute('''SELECT balance
+                            FROM clients WHERE username = ?
+                            LIMIT 1''', (username, )).fetchone()
+    balance = balance[0]
+    return balance
