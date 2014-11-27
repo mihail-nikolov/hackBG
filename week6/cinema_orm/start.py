@@ -11,7 +11,7 @@ session = Session(bind=engine)
 
 cinema = Cinema(session)
 
-cinema.clear_reservation_on_startup()
+#cinema.clear_reservation_on_startup()
 
 
 def start_mess():
