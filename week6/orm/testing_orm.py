@@ -43,7 +43,7 @@ engine = create_engine("sqlite:///university.db")
 class Faculty(Base):
     __tablename__ = "faculty"
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String)`
     num_spec = Column(Integer)
     num_stud = Column(Integer)
 """

@@ -1,7 +1,5 @@
-#import requests
 import sqlite3
 from Client import Client
-#import hashlib
 import datetime
 import calendar
 import uuid

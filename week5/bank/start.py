@@ -40,11 +40,8 @@ def can_login(username):
     date = datetime.datetime.now()
     cur_time = calendar.timegm(date.utctimetuple())
     blocked_at = sql_manager.get_user_bl_time(username)
-    #answer = cur_time - blocked_at
-    #print("cur - bl: {} - {} = {}".format(cur_time, blocked_at, answer))
     time_not_passed = cur_time - blocked_at < block_sec
     user_blocked = sql_manager.is_blocked(username) == 'True'
-    #print(user_blocked)
     if user_blocked and time_not_passed:
         return False
     return True
@@ -61,8 +58,6 @@ def main_menu():
           \nPlease register or login")
 
     while True:
-        #print(failed_log_users)
-       # print(can_login("misho"))
         command = input("$$$>")
         if command == 'register':
             username = input("Enter your username: ")
