@@ -1,13 +1,18 @@
 from create_cinema import Projection, Movie, Reservation
+import sqlite3
 
 
 class Cinema():
 
-    def __init__(self, session):
+    def __init__(self, session, db):
         self.session = session
         self.hall_rows = 10
         self.hall_cols = 10
         self._make_halls()
+        conn = sqlite3.connect(db)
+        self.conn = conn
+        cursor = conn.cursor()
+        self.cursor = cursor
 
     def _make_halls(self):
         self.proj_halls = {}
@@ -35,13 +40,24 @@ class Cinema():
             self.session.commit()
 
     def cancel_reservation(self, name):
-        self.session.delete(Reservation.username == name)
+        self.cursor.execute("""DELETE FROM reservations
+                                WHERE username = ?""", (name,))
         self.conn.commit()
 
     def clear_reservation_on_startup(self):
-        #!!!!!!!!!!!!!!
-        self.session.delete(Reservation.objects.all())
-        self.session.commit()
+        self.cursor.execute("""DELETE FROM reservations""")
+        self.conn.commit()
+
+    def _get_user_places(self, user):
+        reservations = self.session.query(Reservation).filter(Reservation.username == user).all()
+        places_arr = []
+        for reserv in reservations:
+            places_arr.append([reserv.row, reserv.col])
+        return places_arr
+
+    def _get_proj_id_user(self, user):
+        reserv = self.session.query(Reservation).filter(Reservation.username == user).all()
+        return reserv[0].projection_id
 
     def add_projection(self, m_id, m_type, m_date, time):
         self.session.add(Projection(movie_id=m_id, movie_type=m_type, movie_date=m_date, movie_time=time))

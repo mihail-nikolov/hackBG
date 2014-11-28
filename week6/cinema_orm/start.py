@@ -3,15 +3,15 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from cinema import Cinema
 
-
+db = 'cinema.db'
 Base = declarative_base()
 engine = create_engine("sqlite:///cinema.db")
 Base.metadata.create_all(engine)
 session = Session(bind=engine)
 
-cinema = Cinema(session)
+cinema = Cinema(session, db)
 
-#cinema.clear_reservation_on_startup()
+cinema.clear_reservation_on_startup()
 
 
 def start_mess():
@@ -127,7 +127,7 @@ def main():
             movie = cinema._get_movie_name(m_id)
             date, time = cinema._get_movie_date_time(proj_id)
             print_reserv(movie, places_arr, date, time)
-            confirm = input("Confirm - type 'finalize'")
+            confirm = input("Confirm - type 'finalize': ")
             if confirm == "finalize":
                 cinema.make_reservation(name, places_arr, proj_id)
             else:
@@ -135,10 +135,11 @@ def main():
                 print("You refused your reservation. Bye")
 
         elif the_command(command, "cancel_reservation"):
-            name = input("What is your name")
+            name = input("What is your name: ")
+            places_arr = cinema._get_user_places(name)
+            proj_id = cinema._get_proj_id_user(name)
+            cinema.del_x(proj_id, places_arr)
             cinema.cancel_reservation(name)
-            #to del x for this name
-            #cinema.del_x(proj_id, places_arr)
             print("your reservation has been deleted")
 
         elif the_command(command, "exit"):
