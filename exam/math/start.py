@@ -24,9 +24,11 @@ def start_mess():
 
 
 def print_func(set_obj):
-    for row in set_obj:
-        print(row)
-        #make some corrections to print the right way!
+    counter = 1
+    for row in reversed(set_obj):
+        print_str = str(counter) + '. ' + row[0] + ' with ' + str(row[1]) + ' points'
+        counter += 1
+        print(print_str)
 
 
 def split_command_str(command):

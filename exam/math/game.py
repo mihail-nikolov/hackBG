@@ -17,8 +17,8 @@ class Game():
         self.session.commit()
 
     def get_rating_table(self):
-        result = self.cursor.execute('''SELECT * FROM players
-                                               ORDER BY points''')
+        result = self.cursor.execute('''SELECT name, points FROM players
+                                               ORDER BY points''').fetchall()
         return result
 
     def _get_result(self, name):
